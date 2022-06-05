@@ -2,9 +2,9 @@ package com.msc.mydropcloud.dao;
 
 import com.msc.mydropcloud.entity.MyFile;
 import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
 
 /**
@@ -13,25 +13,35 @@ import java.util.UUID;
  */
 public class SaveSystemDAOImpl implements SaveSystemDAO {
 
-    static Map<String, List<MyFile>> hashFile = new HashMap<>();
-    static Map<UUID, List<MyFile>> uuidFile = new HashMap<>();
+    static Map<String, MyFile> hashFile = new HashMap<>();
+    static Map<UUID, Set<MyFile>> uuidParentFile = new HashMap<>();
+    static Map<UUID, MyFile> uuidFile = new HashMap<>();
 
     @Override
     public void save(MyFile file) {
-        if (hashFile.containsKey(file.hash)) {
-            hashFile.get(file.hash).add(file);
+        hashFile.put(file.hash, file);
+        uuidFile.put(file.uuid, file);
+        if (uuidParentFile.containsKey(file.parent)) {
+            uuidParentFile.get(file.parent).add(file);
         } else {
-            List<MyFile> l = new LinkedList<>();
+            Set<MyFile> l = new HashSet<>();
             l.add(file);
-            hashFile.put(file.hash, l);
+            uuidParentFile.put(file.parent, l);
         }
-        if (uuidFile.containsKey(file.uuid)) {
-            uuidFile.get(file.uuid).add(file);
-        } else {
-            List<MyFile> l = new LinkedList<>();
-            l.add(file);
-            uuidFile.put(file.uuid, l);
-        }
+    }
+
+    @Override
+    public void update(MyFile file) {
+        MyFile oldFile = uuidFile.get(file.uuid);
+        hashFile.remove(file.uuid);
+        hashFile.put(file.hash, file);
+//        if (uuidParentFile.containsKey(file.parent)) {
+//            uuidParentFile.get(file.parent).add(file);
+//        } else {
+//            Set<MyFile> l = new HashSet<>();
+//            l.add(file);
+//            uuidParentFile.put(file.parent, l);
+//        }
     }
 
 }

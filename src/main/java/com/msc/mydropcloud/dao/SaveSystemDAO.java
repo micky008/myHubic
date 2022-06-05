@@ -9,5 +9,6 @@ import com.msc.mydropcloud.entity.MyFile;
 public interface SaveSystemDAO {
 
     public void save(MyFile file);
+    public void update(MyFile file);
     
 }

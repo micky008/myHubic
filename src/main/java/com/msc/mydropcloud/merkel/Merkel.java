@@ -11,6 +11,7 @@ import java.io.InputStream;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.List;
+import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -54,7 +55,7 @@ public class Merkel {
         return getFileChecksum(shaDigest, new ByteArrayInputStream(baos.toByteArray()));
     }
 
-    public String hashMyFiles(List<MyFile> files) {
+    public String hashMyFiles(Set<MyFile> files) {
         if (files.isEmpty()) {
             return "vide";
         }

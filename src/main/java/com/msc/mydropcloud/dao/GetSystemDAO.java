@@ -1,7 +1,7 @@
 package com.msc.mydropcloud.dao;
 
 import com.msc.mydropcloud.entity.MyFile;
-import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 
 /**
@@ -10,6 +10,7 @@ import java.util.UUID;
  */
 public interface GetSystemDAO {
 
-    public List<MyFile> get(UUID uuid);
-    public List<MyFile> get(String hash);
+    public Set<MyFile> getByParent(UUID uuid);
+    public MyFile get(String hash);
+    public MyFile get(UUID uuid);
 }
