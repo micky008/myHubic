@@ -12,17 +12,12 @@ public class GetSystemDAOImpl implements GetSystemDAO {
 
     @Override
     public MyFile get(UUID uuid) {
-        return SaveSystemDAOImpl.uuidFile.get(uuid);
-    }
-
-    @Override
-    public MyFile get(String hash) {
-        return SaveSystemDAOImpl.hashFile.get(hash);
+        return SaveSystemDAOHashMapImpl.uuidFile.get(uuid);
     }
 
     @Override
     public Set<MyFile> getByParent(UUID uuid) {
-        return SaveSystemDAOImpl.uuidParentFile.get(uuid);
+        return SaveSystemDAOHashMapImpl.uuidParentFile.get(uuid);
     }
 
    

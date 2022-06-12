@@ -11,6 +11,5 @@ import java.util.UUID;
 public interface GetSystemDAO {
 
     public Set<MyFile> getByParent(UUID uuid);
-    public MyFile get(String hash);
     public MyFile get(UUID uuid);
 }

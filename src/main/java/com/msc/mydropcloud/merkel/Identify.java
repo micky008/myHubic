@@ -9,6 +9,7 @@ import java.io.File;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
+import java.util.regex.Pattern;
 
 /**
  *
@@ -21,6 +22,7 @@ public class Identify {
     private final ConfigDAO configDao;
     private final File file;
     private final Merkel merkel = new Merkel();
+    private final UUID ROOT_UUID = UUID.fromString("00000000-0000-0000-0000-000000000001");
 
     public Identify(File folder) {
         this.ssDao = DAOFactory.ssdao;
@@ -37,7 +39,7 @@ public class Identify {
         MyFile myFile = new MyFile();
         myFile.endpoint = this.file.getName();
         myFile.parent = null;
-        myFile.uuid = UUID.fromString("00000000-0000-0000-0000-000000000001");
+        myFile.uuid = ROOT_UUID;
         myFile.isDir = true;
         myFile.hash = recursFirstScan(myFile.uuid, this.file);
         ssDao.save(myFile);
@@ -59,11 +61,9 @@ public class Identify {
         return merkel.hashMyFiles(list);
     }
 
-    public String addFile(File file) {
-        UUID root = UUID.fromString("00000000-0000-0000-0000-000000000001");
-        String next = file.getAbsolutePath().replace(configDao.getConfig().rootFolder, "");
-        String[] fullPart = next.split(File.pathSeparator);
-        Set<MyFile> myfiles = getDao.getByParent(root);
+    public void addFile(File file) {
+        String[] fullPart = getRootFiles(file);
+        Set<MyFile> myfiles = getDao.getByParent(ROOT_UUID);
         MyFile tmpfile = null;
         boolean find = false;
         for (String part : fullPart) {
@@ -100,7 +100,27 @@ public class Identify {
             find = false;
             myfiles = getDao.getByParent(tmpfile.uuid);
         }
-        return null;
+    }
+
+    public void removeFile(File file) {
+        String[] fullPart = getRootFiles(file);
+        MyFile tmpfile = getLastMyFile(fullPart);
+        if (tmpfile == null) {
+            return;
+        }
+        ssDao.delete(tmpfile);
+        updateMerkel(tmpfile);
+    }
+
+    public void updateFile(File file) {
+        String[] fullPart = getRootFiles(file);
+        MyFile tmpfile = getLastMyFile(fullPart);
+        if (tmpfile == null) {
+            return;
+        }
+        tmpfile.hash = merkel.hash(file);
+        ssDao.update(tmpfile);
+        updateMerkel(tmpfile);
     }
 
     private MyFile createFolder(UUID parent, File file) {
@@ -121,4 +141,34 @@ public class Identify {
         myFile.hash = merkel.hash(file);
         return myFile;
     }
+
+    private String[] getRootFiles(File file) {
+        String next = file.getAbsolutePath().replace(configDao.getConfig().rootFolder + File.separator, "");
+        return next.split(Pattern.quote(File.separator));
+    }
+
+    private MyFile getLastMyFile(String[] tree) {
+        Set<MyFile> myfiles = getDao.getByParent(ROOT_UUID);
+        MyFile tmpfile = null;
+        for (String part : tree) {
+            for (MyFile myfile : myfiles) {
+                if (myfile.endpoint.equals(part)) {
+                    tmpfile = myfile;
+                    break;
+                }
+            }
+            myfiles = getDao.getByParent(tmpfile.uuid);
+        }
+        return tmpfile;
+    }
+
+    private void updateMerkel(MyFile lastPoint) {
+        while (lastPoint.parent != null) {
+            Set<MyFile> myFilesMinus1 = getDao.getByParent(lastPoint.parent);
+            lastPoint = getDao.get(lastPoint.parent);
+            lastPoint.hash = merkel.hashMyFiles(myFilesMinus1);
+            ssDao.update(lastPoint);
+        }
+    }
+
 }

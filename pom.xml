@@ -10,4 +10,12 @@
         <maven.compiler.target>16</maven.compiler.target>
         <exec.mainClass>com.msc.myhubic2.MyHubic2</exec.mainClass>
     </properties>
+    <dependencies>
+        <dependency>
+            <groupId>com.orientechnologies</groupId>
+            <artifactId>orientdb-jdbc</artifactId>
+            <version>3.2.5</version>
+        </dependency>
+    </dependencies>
+    
 </project>

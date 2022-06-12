@@ -6,6 +6,6 @@ package com.msc.mydropcloud.entity;
  */
 public class Config {
     
-    public String rootFolder = "C:\\Users\\\\Michael\\Documents\\papiers";
+    public String rootFolder = "C:\\Users\\Michael\\Documents\\papiers";
     
 }
