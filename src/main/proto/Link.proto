@@ -1,0 +1,50 @@
+
+syntax = "proto3";
+
+option java_package = "com.msc.mydropcloud";
+
+import "google/protobuf/empty.proto";
+
+
+package proto;
+
+service LinkService {
+   rpc ImTheFirst(google.protobuf.Empty) returns (BoolResponse);
+   rpc Check(MyFile) returns (TypeResponse); //check if hash exist. if not get/ delete / put files on this node   
+   rpc Get(MyFile) returns (ByteResponse);
+   rpc Put(PutFile) returns (BoolResponse);
+   rpc Delete(MyFile) returns (BoolResponse);
+}
+
+message MyFile {
+     string endpoint = 1;
+     string uuid = 2;
+     bool isDir = 3;
+     string parent = 4;
+     string hash = 5;
+     string message = 6;
+}
+
+
+message BoolResponse {
+    bool get = 1;
+}
+
+message ByteResponse {
+    bytes get = 1;
+}
+
+message PutFile {
+    MyFile file = 2;
+    bytes content = 1;
+}
+
+message TypeResponse {
+  enum Type {
+    GET = 0;
+    PUT = 1;
+    DELETE = 2;
+  }
+  Type type = 1;
+
+}

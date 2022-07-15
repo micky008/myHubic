@@ -49,11 +49,6 @@ public class SaveSystemDAOOriendbImpl implements SaveSystemDAO {
             ps.setString(5, file.hash);
             ps.executeUpdate();
             ps.close();
-
-            if (file.uuid.toString().equals("00000000-0000-0000-0000-000000000001")) {
-                return;
-            }
-
         } catch (SQLException ex) {
             Logger.getLogger(SaveSystemDAOOriendbImpl.class.getName()).log(Level.SEVERE, null, ex);
         }

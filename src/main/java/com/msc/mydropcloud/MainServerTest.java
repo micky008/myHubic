@@ -5,8 +5,9 @@ package com.msc.mydropcloud;
 
 import com.msc.mydropcloud.dao.DAOFactory;
 import com.msc.mydropcloud.entity.MyFile;
-import io.grpc.ManagedChannel;
-import io.grpc.ManagedChannelBuilder;
+import io.grpc.Server;
+import io.grpc.ServerBuilder;
+import java.io.IOException;
 import java.sql.SQLException;
 import java.util.Set;
 
@@ -14,21 +15,15 @@ import java.util.Set;
  *
  * @author Michael
  */
-public class MainClientTest {
+public class MainServerTest {
 
-    public static void main(String[] args) throws SQLException {
+    public static void main(String[] args) throws SQLException, IOException, InterruptedException {
 
 //       File dest = new File("C:\\Users\\Michael\\Documents\\papiers");
-        ManagedChannel channel = ManagedChannelBuilder.forAddress("localhost", 9998).build();
-
-   //     TestHelloServiceGrpc.TestHelloServiceBlockingStub blockingStub = TestHelloServiceGrpc.newBlockingStub(channel);
-
-   //     HelloMessage message = HelloMessage.newBuilder().setMessage("bonjour Connau").build();
-
-    //    Test.HelloResponse resp = blockingStub.setFeature(message);
-        
-    //    System.out.println(resp.getResp());
-
+        Server s = ServerBuilder.forPort(9998).addService(new GreeterImpl()).build();
+        s.start();
+        System.out.println("lecture sur port 9998");
+        s.awaitTermination();
         //Identify identif = new Identify(dest);
 //        MyFile racine = identif.firstScan();
 //        DAOFactory.ssdao.makeEdge();
@@ -51,6 +46,17 @@ public class MainClientTest {
                 System.out.println(f.endpoint + (f.isDir ? "/\t" : "") + "\t" + f.parent + "\t" + f.uuid + "\t" + f.hash);
             }
         }
+    }
+
+    static class GreeterImpl extends TestHelloServiceGrpc.TestHelloServiceImplBase {
+
+        
+//        @Override
+//        public void setFeature(HelloMessage req, StreamObserver<HelloResponse> responseObserver) {
+//            HelloResponse reply = HelloResponse.newBuilder().setResp("Hello " + req.getMessage()).build();
+//            responseObserver.onNext(reply);
+//            responseObserver.onCompleted();
+//        }
     }
 
 }

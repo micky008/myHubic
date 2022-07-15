@@ -43,13 +43,13 @@ public class SaveSystemDAOHashMapImpl implements SaveSystemDAO {
                 uuidFile.remove(f.uuid);
             }
             uuidParentFile.remove(file.uuid);
-        }        
+        }
         uuidFile.remove(file.uuid);
     }
 
     @Override
     public void makeEdge() {
-        
+
     }
 
 }
