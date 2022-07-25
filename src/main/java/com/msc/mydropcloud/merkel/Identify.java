@@ -22,7 +22,7 @@ public class Identify {
     private final ConfigDAO configDao;
     private final File file;
     private final Merkel merkel = new Merkel();
-    private final UUID ROOT_UUID = UUID.fromString("00000000-0000-0000-0000-000000000001");
+    public static final UUID ROOT_UUID = UUID.fromString("00000000-0000-0000-0000-000000000001");
 
     public Identify(File folder) {
         this.ssDao = DAOFactory.ssdao;

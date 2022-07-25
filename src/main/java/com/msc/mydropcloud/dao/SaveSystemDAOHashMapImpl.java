@@ -3,6 +3,7 @@ package com.msc.mydropcloud.dao;
 import com.msc.mydropcloud.entity.MyFile;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
@@ -14,11 +15,9 @@ import java.util.UUID;
 public class SaveSystemDAOHashMapImpl implements SaveSystemDAO {
 
     static Map<UUID, Set<MyFile>> uuidParentFile = new HashMap<>();
-    static Map<UUID, MyFile> uuidFile = new HashMap<>();
 
     @Override
     public void save(MyFile file) {
-        uuidFile.put(file.uuid, file);
         if (uuidParentFile.containsKey(file.parent)) {
             uuidParentFile.get(file.parent).add(file);
         } else {
@@ -30,21 +29,38 @@ public class SaveSystemDAOHashMapImpl implements SaveSystemDAO {
 
     @Override
     public void update(MyFile file) {
-        MyFile oldFile = uuidFile.get(file.uuid);
-        oldFile.hash = file.hash;
-        uuidFile.put(oldFile.uuid, oldFile);
+        if (!uuidParentFile.containsKey(file.parent)) {
+            return;
+        }
+        if (file.uuid.equals(GetSystemDAOImpl.ROOT_UUID)) {
+            uuidParentFile.get(null).add(file);
+            return;
+        }
+        Iterator<MyFile> it = uuidParentFile.get(file.parent).iterator();
+        while (it.hasNext()) {
+            MyFile next = it.next();
+            if (next.endpoint.equals(file.endpoint)) {
+                it.remove();
+                uuidParentFile.get(file.parent).add(file);
+                break;
+            }
+        }
+
     }
 
     @Override
     public void delete(MyFile file) {
         if (file.isDir) {
-            Set<MyFile> files = uuidParentFile.get(file.uuid);
-            for (MyFile f : files) {
-                uuidFile.remove(f.uuid);
-            }
             uuidParentFile.remove(file.uuid);
+        } else {
+            Iterator<MyFile> it = uuidParentFile.get(file.parent).iterator();
+            while (it.hasNext()) {
+                MyFile next = it.next();
+                if (next.uuid.equals(file.uuid)) {
+                    it.remove();
+                }
+            }
         }
-        uuidFile.remove(file.uuid);
     }
 
     @Override

@@ -10,7 +10,7 @@ package proto;
 
 service LinkService {
    rpc ImTheFirst(google.protobuf.Empty) returns (BoolResponse);
-   rpc Check(MyFile) returns (TypeResponse); //check if hash exist. if not get/ delete / put files on this node   
+   rpc Check(stream MyFile) returns (stream TypeResponse); //check if hash exist. if not get/ delete / put files on this node   
    rpc Get(MyFile) returns (ByteResponse);
    rpc Put(PutFile) returns (BoolResponse);
    rpc Delete(MyFile) returns (BoolResponse);
