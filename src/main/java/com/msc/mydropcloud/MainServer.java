@@ -36,7 +36,7 @@ public class MainServer {
         }
 
         @Override
-        public void get(Link.MyFile request, StreamObserver<BytesValue> responseObserver) {
+        public void get(Link.UUID request, StreamObserver<BytesValue> responseObserver) {
             super.get(request, responseObserver); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/OverriddenMethodBody
         }
 

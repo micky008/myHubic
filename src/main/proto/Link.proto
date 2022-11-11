@@ -2,7 +2,7 @@ syntax = "proto3";
 
 option java_package = "com.msc.mydropcloud";
 
-//import "google/protobuf/empty.proto";
+import "google/protobuf/empty.proto";
 import "google/protobuf/wrappers.proto";
 
 package proto;
@@ -55,7 +55,7 @@ service LinkService {
     /**
     * Send the info to the server is finish.
     */
-    rpc EndOfTransmission(google.protobuf.Empty) returns (google.protobuf.Empty)
+    rpc EndOfTransmission(google.protobuf.Empty) returns (google.protobuf.Empty);
 
 }
 

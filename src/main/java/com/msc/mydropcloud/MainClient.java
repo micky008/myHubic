@@ -95,7 +95,8 @@ public class MainClient {
     }
 
     private void getNewFile(String folder, Link.MyFile lmf) {
-        BytesValue byV = linkGrpc.get(lmf);
+        Link.UUID uuid = Link.UUID.newBuilder().setUuid(lmf.getUuid()).build();
+        BytesValue byV = linkGrpc.get(uuid);
         File file = new File(folder, lmf.getEndpoint());
         OutputStream os = null;
         try {
