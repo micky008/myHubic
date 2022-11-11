@@ -64,8 +64,9 @@ public class SaveSystemDAOOriendbImpl implements SaveSystemDAO {
 
     }
 
+    
     @Override
-    public void makeEdge() {
+    public void postSave() {
         try {
             String query = "Select parent, uuid from File";
             String edge = "CREATE EDGE FROM (SELECT FROM File WHERE uuid = ?) TO (SELECT FROM File WHERE uuid = ?)";

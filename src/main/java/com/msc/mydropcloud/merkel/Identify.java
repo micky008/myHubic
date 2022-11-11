@@ -1,7 +1,7 @@
 package com.msc.mydropcloud.merkel;
 
 import com.msc.mydropcloud.dao.ConfigDAO;
-import com.msc.mydropcloud.dao.DAOFactory;
+import com.msc.mydropcloud.dao.DAO;
 import com.msc.mydropcloud.dao.GetSystemDAO;
 import com.msc.mydropcloud.dao.SaveSystemDAO;
 import com.msc.mydropcloud.entity.MyFile;
@@ -25,9 +25,9 @@ public class Identify {
     public static final UUID ROOT_UUID = UUID.fromString("00000000-0000-0000-0000-000000000001");
 
     public Identify(File folder) {
-        this.ssDao = DAOFactory.ssdao;
-        this.getDao = DAOFactory.getdao;
-        this.configDao = DAOFactory.configdao;
+        this.ssDao = DAO.ssdao;
+        this.getDao = DAO.getdao;
+        this.configDao = DAO.configdao;
         if (folder.isFile()) {
             this.file = folder.getParentFile();
         } else {
@@ -63,7 +63,7 @@ public class Identify {
 
     public void addFile(File file) {
         String[] fullPart = getRootFiles(file);
-        Set<MyFile> myfiles = getDao.getByParent(ROOT_UUID);
+        Set<MyFile> myfiles = getDao.getChildMyFileByUUIDParent(ROOT_UUID);
         MyFile tmpfile = null;
         boolean find = false;
         for (String part : fullPart) {
@@ -86,11 +86,11 @@ public class Identify {
                 }
                 ssDao.save(myFile); //newFile was attached to tmpFile
                 //now we modify hash in desc mode
-                Set<MyFile> myFiles1 = getDao.getByParent(tmpfile.uuid);
+                Set<MyFile> myFiles1 = getDao.getChildMyFileByUUIDParent(tmpfile.uuid);
                 tmpfile.hash = merkel.hashMyFiles(myFiles1);
                 ssDao.update(tmpfile);
                 while (tmpfile.parent != null) {
-                    Set<MyFile> myFilesMinus1 = getDao.getByParent(tmpfile.parent);
+                    Set<MyFile> myFilesMinus1 = getDao.getChildMyFileByUUIDParent(tmpfile.parent);
                     tmpfile = getDao.get(tmpfile.parent);
                     tmpfile.hash = merkel.hashMyFiles(myFilesMinus1);
                     ssDao.update(tmpfile);
@@ -98,7 +98,7 @@ public class Identify {
                 break;
             }
             find = false;
-            myfiles = getDao.getByParent(tmpfile.uuid);
+            myfiles = getDao.getChildMyFileByUUIDParent(tmpfile.uuid);
         }
     }
 
@@ -148,7 +148,7 @@ public class Identify {
     }
 
     private MyFile getLastMyFile(String[] tree) {
-        Set<MyFile> myfiles = getDao.getByParent(ROOT_UUID);
+        Set<MyFile> myfiles = getDao.getChildMyFileByUUIDParent(ROOT_UUID);
         MyFile tmpfile = null;
         for (String part : tree) {
             for (MyFile myfile : myfiles) {
@@ -157,14 +157,14 @@ public class Identify {
                     break;
                 }
             }
-            myfiles = getDao.getByParent(tmpfile.uuid);
+            myfiles = getDao.getChildMyFileByUUIDParent(tmpfile.uuid);
         }
         return tmpfile;
     }
 
     private void updateMerkel(MyFile lastPoint) {
         while (lastPoint.parent != null) {
-            Set<MyFile> myFilesMinus1 = getDao.getByParent(lastPoint.parent);
+            Set<MyFile> myFilesMinus1 = getDao.getChildMyFileByUUIDParent(lastPoint.parent);
             lastPoint = getDao.get(lastPoint.parent);
             lastPoint.hash = merkel.hashMyFiles(myFilesMinus1);
             ssDao.update(lastPoint);

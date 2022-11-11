@@ -19,7 +19,7 @@ import java.util.logging.Logger;
  *
  * @author Michael
  */
-public class Merkel {
+class Merkel {
 
     private MessageDigest shaDigest;
 

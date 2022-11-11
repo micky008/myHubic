@@ -64,8 +64,8 @@ public class SaveSystemDAOHashMapImpl implements SaveSystemDAO {
     }
 
     @Override
-    public void makeEdge() {
-
+    public void postSave() {
     }
+
 
 }

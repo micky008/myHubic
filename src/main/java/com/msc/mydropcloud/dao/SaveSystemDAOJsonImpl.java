@@ -17,7 +17,7 @@ public class SaveSystemDAOJsonImpl extends SaveSystemDAOHashMapImpl {
     static Gson gson = new GsonBuilder().setPrettyPrinting().create();
 
     @Override
-    public void makeEdge() {
+    public void postSave() {
         FileWriter fw = null;
         try {
             int pos = 0;
