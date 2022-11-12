@@ -32,14 +32,12 @@ public class MainClient {
 
     private static LinkServiceGrpc.LinkServiceBlockingStub linkGrpc;
 //    private static LinkServiceGrpc.LinkServiceStub linkAsyncGrpc;
-    private File dest = new File("C:\\Users\\Michael\\Documents\\papiers");
 
     public static void main(String[] args) throws Exception {
         new MainClient().go(args);
 
-        ManagedChannel channel = ManagedChannelBuilder.forAddress("localhost", 9998).build();
+        ManagedChannel channel = ManagedChannelBuilder.forAddress(DAO.configdao.getConfig().common.host, DAO.configdao.getConfig().common.port).build();
         linkGrpc = LinkServiceGrpc.newBlockingStub(channel);
-
 //        linkAsyncGrpc = LinkServiceGrpc.newStub(channel);
 
     }
@@ -69,9 +67,9 @@ public class MainClient {
         BoolValue imFirst = linkGrpc.imTheFirst(myName);
 
         if (imFirst.getValue()) {
-            recursImFirst(root, dest.getAbsolutePath());
+            recursImFirst(root, DAO.configdao.getConfig().client.folder);
         } else {
-            recursNotFirst(root, dest.getAbsolutePath());
+            recursNotFirst(root, DAO.configdao.getConfig().client.folder);
         }
     }
 
@@ -133,7 +131,11 @@ public class MainClient {
                         IOUtils.copyLarge(is, os);
                         is.close();
                         ByteString bs = ByteString.copyFrom(os.toByteArray());
-                        Link.SendMyMyfile smmf = Link.SendMyMyfile.newBuilder().setMyfile(getMyFile.convert()).setContent(bs).build();
+                        Link.SendMyMyfile smmf = Link.SendMyMyfile.newBuilder().
+                                setMyfile(getMyFile.convert()).
+                                setPathName(folder).
+                                setContent(bs).
+                                build();
                         linkGrpc.send(smmf);
                     } catch (Exception e) {
                         e.printStackTrace();

@@ -16,8 +16,8 @@ service LinkService {
     rpc ImTheFirst(MacAddress) returns (google.protobuf.BoolValue);
 
     /**
-    * Check if a merkel hash have change.
-    * @Param: StringValue is the hash
+    * Check if the rootFolder's merkel hash have change.
+    * 
     */
     rpc HashChange(Hash) returns (google.protobuf.BoolValue);
 
@@ -25,6 +25,7 @@ service LinkService {
     * If a hash is different of the server, so GetFileTreeFromServer return All 'MyFile' from server
     * make the comparaison with your local.
     * Use this function if 'ImTheFirst' was false
+    * client <-- server
     */
     rpc GetFileTreeFromServer(UUID) returns (ArrayMyFile);
 
@@ -32,7 +33,9 @@ service LinkService {
     * If a hash is different of the server, send the tree to the server
     * Use this function if 'ImTheFirst' was true.
     * Send All MyFile from local, it's the server who use the comparator.
+    * client --> server    
     * @return: Array Of file's UUID whos changes. 
+    *
     *
     */
     rpc SendFileTreeToServer(ArrayMyFile) returns (ArrayUUID);
@@ -44,11 +47,13 @@ service LinkService {
 
     /**
     * Get the new or updated File.
+    * client <-- server
     */
     rpc Get(UUID) returns (google.protobuf.BytesValue);
 
     /**
     * Send the new file to the server
+    * client --> server 
     */
     rpc Send(SendMyMyfile) returns (google.protobuf.BoolValue);
 
@@ -79,6 +84,7 @@ message ArrayUUID{
 message SendMyMyfile {
     MyFile myfile = 1;
     bytes content = 2; 
+    string pathName = 3;
 }
 
 message UUID {

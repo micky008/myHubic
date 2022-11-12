@@ -2,6 +2,7 @@ package com.msc.mydropcloud.dao;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.msc.mydropcloud.GetInstance;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -21,10 +22,19 @@ public class SaveSystemDAOJsonImpl extends SaveSystemDAOHashMapImpl {
         FileWriter fw = null;
         try {
             int pos = 0;
-            File file = new File("c:/tmp", "merkel-" + pos + ".json");
+            File file = null;
+            if (GetInstance.getIsServer()) {
+                file = new File(DAO.configdao.getConfig().server.confFolder, "merkel-" + pos + ".json");
+            } else {
+                file = new File(DAO.configdao.getConfig().client.confFolder, "merkel-" + pos + ".json");
+            }
             while (file.exists()) {
                 pos++;
-                file = new File("c:/tmp", "merkel-" + pos + ".json");
+                if (GetInstance.getIsServer()) {
+                    file = new File(DAO.configdao.getConfig().server.confFolder, "merkel-" + pos + ".json");
+                } else {
+                    file = new File(DAO.configdao.getConfig().client.confFolder, "merkel-" + pos + ".json");
+                }
             }
             fw = new FileWriter(file);
             gson.toJson(uuidParentFile, fw);

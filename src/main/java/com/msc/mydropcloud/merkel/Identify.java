@@ -1,5 +1,6 @@
 package com.msc.mydropcloud.merkel;
 
+import com.msc.mydropcloud.GetInstance;
 import com.msc.mydropcloud.dao.ConfigDAO;
 import com.msc.mydropcloud.dao.DAO;
 import com.msc.mydropcloud.dao.GetSystemDAO;
@@ -22,7 +23,6 @@ public class Identify {
     private final ConfigDAO configDao;
     private final File file;
     private final Merkel merkel = new Merkel();
-    public static final UUID ROOT_UUID = UUID.fromString("00000000-0000-0000-0000-000000000001");
 
     public Identify(File folder) {
         this.ssDao = DAO.ssdao;
@@ -39,7 +39,7 @@ public class Identify {
         MyFile myFile = new MyFile();
         myFile.endpoint = this.file.getName();
         myFile.parent = null;
-        myFile.uuid = ROOT_UUID;
+        myFile.uuid = GetSystemDAO.ROOT_UUID;
         myFile.isDir = true;
         myFile.hash = recursFirstScan(myFile.uuid, this.file);
         ssDao.save(myFile);
@@ -63,7 +63,7 @@ public class Identify {
 
     public void addFile(File file) {
         String[] fullPart = getRootFiles(file);
-        Set<MyFile> myfiles = getDao.getChildMyFileByUUIDParent(ROOT_UUID);
+        Set<MyFile> myfiles = getDao.getChildMyFileByUUIDParent(GetSystemDAO.ROOT_UUID);
         MyFile tmpfile = null;
         boolean find = false;
         for (String part : fullPart) {
@@ -143,12 +143,17 @@ public class Identify {
     }
 
     private String[] getRootFiles(File file) {
-        String next = file.getAbsolutePath().replace(configDao.getConfig().rootFolder + File.separator, "");
+        String next = null;
+        if (GetInstance.getIsServer()) {
+            file.getAbsolutePath().replace(configDao.getConfig().server.folder + File.separator, "");
+        } else {
+            file.getAbsolutePath().replace(configDao.getConfig().client.folder + File.separator, "");
+        }
         return next.split(Pattern.quote(File.separator));
     }
 
     private MyFile getLastMyFile(String[] tree) {
-        Set<MyFile> myfiles = getDao.getChildMyFileByUUIDParent(ROOT_UUID);
+        Set<MyFile> myfiles = getDao.getChildMyFileByUUIDParent(GetSystemDAO.ROOT_UUID);
         MyFile tmpfile = null;
         for (String part : tree) {
             for (MyFile myfile : myfiles) {
