@@ -4,13 +4,15 @@
     <groupId>com.msc.mydropcloud</groupId>
     <artifactId>MyDropCloud</artifactId>
     <version>1.0-SNAPSHOT</version>
+    <packaging>pom</packaging>
+	 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.compiler.source>16</maven.compiler.source>
         <maven.compiler.target>16</maven.compiler.target>
-        <exec.mainClass>com.msc.myhubic2.MyHubic2</exec.mainClass>
         <grpc.version>1.47.0</grpc.version>
     </properties>
+
     <dependencies>
         <dependency>
             <groupId>com.orientechnologies</groupId>
@@ -79,4 +81,12 @@
             </plugin>
         </plugins>
     </build>
+    
+    <modules>
+        <module>Common</module>
+        <module>Client</module>
+        <module>Server</module>
+    </modules>
+    
+    
 </project>
