@@ -81,7 +81,7 @@ public class MainClient {
 
     private void recursNotFirst(MyFile root, String folder) {
         Link.UUID rootUUID = Link.UUID.newBuilder().setUuid(root.uuid.toString()).build();
-        Link.ArrayMyFile arrMf = linkGrpc.getFileTreeFromServer(rootUUID);
+        Link.ArrayMyFile arrMf = linkGrpc.getFolderFile(rootUUID);
         List<Link.MyFile> myfiles = arrMf.getMyfilesList();
         for (Link.MyFile lMf : myfiles) {
             MyFile mf = new MyFile(lMf);
@@ -115,7 +115,7 @@ public class MainClient {
 
     private void recursImFirst(MyFile rootFile, String folder) {
         Link.ArrayMyFile.Builder bArrMf = Link.ArrayMyFile.newBuilder();
-        Set<MyFile> myfiles = DAO.getdao.getChildMyFileByUUIDParent(rootFile.uuid);
+        Set<MyFile> myfiles = DAO.getdao.getFilesFromFolder(rootFile.uuid);
         int pos = 0;
         for (MyFile myFile : myfiles) {
             bArrMf.addMyfiles(pos++, Convert.convertMyfileToLinkMyFile(myFile));
@@ -124,7 +124,7 @@ public class MainClient {
         Link.ArrayUUID uuids = Link.ArrayUUID.getDefaultInstance();
 
         while (uuids != null) {
-            uuids = linkGrpc.sendFileTreeToServer(arrMf);
+            uuids = linkGrpc.sendFolder(arrMf);
             for (Link.UUID uuid : uuids.getUuidList()) {
                 MyFile getMyFile = DAO.getdao.get(UUID.fromString(uuid.getUuid())); //is this file exist ?
                 if (getMyFile.isDir) {
