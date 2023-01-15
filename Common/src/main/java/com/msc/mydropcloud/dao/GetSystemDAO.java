@@ -17,7 +17,7 @@ public interface GetSystemDAO {
      * @param uuid
      * @return 
      */
-    public Set<MyFile> getChildMyFileByUUIDParent(UUID uuid);
+    public Set<MyFile> getFilesFromFolder(UUID uuid);
     
     /**
      * If UUID dosn't exsit return null.

@@ -23,7 +23,7 @@ public class GetSystemDAOImpl implements GetSystemDAO {
     }
 
     @Override
-    public Set<MyFile> getChildMyFileByUUIDParent(UUID uuid) {
+    public Set<MyFile> getFilesFromFolder(UUID uuid) {
         return SaveSystemDAOHashMapImpl.uuidParentFile.get(uuid);
     }
 

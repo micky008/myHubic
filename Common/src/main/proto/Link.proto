@@ -27,7 +27,7 @@ service LinkService {
     * Use this function if 'ImTheFirst' was false
     * client <-- server
     */
-    rpc GetFileTreeFromServer(UUID) returns (ArrayMyFile);
+    rpc GetFolderFile(UUID) returns (ArrayMyFile);
 
     /**
     * If a hash is different of the server, send the tree to the server
@@ -38,7 +38,7 @@ service LinkService {
     *
     *
     */
-    rpc SendFileTreeToServer(ArrayMyFile) returns (ArrayUUID);
+    rpc SendFolder(ArrayMyFile) returns (ArrayUUID);
     
     /**
     * If a client folder dosn't exist isUUIDExist return false, so delete all nodes.
