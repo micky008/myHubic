@@ -96,19 +96,29 @@ public class MainServer {
         }
 
         @Override
-        public void sendFileTreeToServer(Link.ArrayMyFile request, StreamObserver<Link.ArrayUUID> responseObserver) {
+        public void sendFolder(Link.ArrayMyFile request, StreamObserver<Link.ArrayUUID> responseObserver) {
             List<Link.MyFile> lmyfiles = request.getMyfilesList();
-            List<MyFile> myfiles = Convert.convertLinkMyFileToMyFile(lmyfiles);            
+            List<MyFile> myfiles = Convert.convertLinkMyFileToMyFile(lmyfiles);
+            Link.ArrayUUID.Builder uuidsModifiedOrDosntExistBuilder = Link.ArrayUUID.newBuilder();
             for (MyFile myFile : myfiles) {
-                //is file exsit
-                
-                
+                MyFile getFile = DAO.getdao.get(myFile.uuid);
+                if (getFile == null || !getFile.hash.equals(myFile.hash)) {
+                    uuidsModifiedOrDosntExistBuilder.addUuid(Link.UUID.newBuilder().setUuid(myFile.uuid.toString()));
+                }
             }
+            responseObserver.onNext(uuidsModifiedOrDosntExistBuilder.build());
+            responseObserver.onCompleted();
         }
 
         @Override
-        public void getFileTreeFromServer(Link.UUID request, StreamObserver<Link.ArrayMyFile> responseObserver) {
-            super.getFileTreeFromServer(request, responseObserver); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/OverriddenMethodBody
+        public void getFolderFile(Link.UUID request, StreamObserver<Link.ArrayMyFile> responseObserver) {
+            MyFile getFile = DAO.getdao.get(UUID.fromString(request.getUuid()));
+            if (getFile == null) {
+                responseObserver.onNext(Link.ArrayMyFile.newBuilder().build());
+                responseObserver.onCompleted();
+                return;
+            }
+          //  DAO.getdao.getFilesFromFolder(getFile.)
         }
 
         @Override
