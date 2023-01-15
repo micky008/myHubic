@@ -8,9 +8,9 @@
 	 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <maven.compiler.source>16</maven.compiler.source>
-        <maven.compiler.target>16</maven.compiler.target>
-        <grpc.version>1.47.0</grpc.version>
+        <maven.compiler.source>17</maven.compiler.source>
+        <maven.compiler.target>17</maven.compiler.target>
+        <grpc.version>1.51.1</grpc.version>
     </properties>
 
     <dependencies>
@@ -81,6 +81,7 @@
             </plugin>
         </plugins>
     </build>
+      
     
     <modules>
         <module>Common</module>
